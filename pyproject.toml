@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "vak-parser"
+version = "0.1.0"
+description = ""
+authors = ["vodkar <boombarah@gmail.com>"]
+readme = "README.md"
+packages = [{include = "vak_journals"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+httpx = "^0.25.0"
+camelot-py = "^0.11.0"
+pyarrow = "^13.0.0"
+
+[tool.poetry.group.dev.dependencies]
+autopep8 = "^2.0.4"
+flake8 = "^6.1.0"
+isort = "^5.12.0"
+mypy = "^1.5.1"
+pylint = "^2.17.5"
+pytest = "^7.4.2"
+wemake-python-styleguide = "^0.18.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.autopep8]
+max_line_length = 120
+aggressive = 3
