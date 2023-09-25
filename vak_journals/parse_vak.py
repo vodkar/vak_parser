@@ -1,4 +1,3 @@
-import re
 from multiprocessing import get_context
 from pathlib import Path
 from typing import Final
@@ -8,7 +7,8 @@ import httpx
 import numpy as np
 import pandas as pd
 
-VAK_LIST_URL: Final[str] = "https://phdru.com/mydocs/pervak17072023.pdf"
+from vak_journals.consts import VAK_JOURNALS_PDF, VAK_LIST_URL
+
 PAGE_COUNT = 1216
 PROCESSES_NUM = 6
 COLUMNS_NAMES: Final[list[str]] = ["id", "name", "issn", "specialties", "included_date"]
@@ -19,11 +19,10 @@ def read_pdf_table(pdf_path: str, pages: str):
 
 
 def parse_vak():
-    # response: httpx.Response = httpx.get(VAK_LIST_URL)
-    pdf: Path = Path("data") / "pdfs" / VAK_LIST_URL.split("/")[-1]
+    response: httpx.Response = httpx.get(VAK_LIST_URL)
 
-    # with pdf.open("bw") as pdf_file:
-    #     pdf_file.write(response.content)
+    with VAK_JOURNALS_PDF.open("bw") as pdf_file:
+        pdf_file.write(response.content)
 
     page_per_process = PAGE_COUNT // PROCESSES_NUM
     pages = [f"{i + 1}-{i+page_per_process}" for i in range(0, PAGE_COUNT + 1, page_per_process)]
@@ -32,7 +31,7 @@ def parse_vak():
 
     tables = []
     with get_context('spawn').Pool(PROCESSES_NUM) as pool:
-        for _tables in pool.starmap(read_pdf_table, ((str(pdf), _pages) for _pages in pages)):
+        for _tables in pool.starmap(read_pdf_table, ((str(VAK_JOURNALS_PDF), _pages) for _pages in pages)):
             tables.extend(_tables)
 
     # tables = camelot.read_pdf(str(pdf), pages='1,2')
